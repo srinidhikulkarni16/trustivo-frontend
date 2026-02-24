@@ -1,20 +1,33 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Documents from "./pages/Documents";
+import PdfPage from "./pages/PdfPage";
+import PhotoPage from "./pages/PhotoPage";
+import OtherServices from "./pages/OtherServices";
+import UploadPage from "./pages/UploadPage";
 
-function Home() {
-  return (
-    <div className="h-screen flex items-center justify-center text-3xl font-bold">
-      Welcome to Trustivo 🚀
-    </div>
-  );
-}
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/upload/pdf" element={<PdfPage />} />
+          <Route path="/upload/photo" element={<PhotoPage />} />
+          <Route path="/upload/other" element={<OtherServices />} />
+          <Route path="/upload/:type" element={<UploadPage />} />
+        </Route>
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
