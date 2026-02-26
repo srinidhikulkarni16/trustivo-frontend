@@ -1,65 +1,170 @@
-import React from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import api from "../services/api";
 
 export default function MainLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [files, setFiles] = useState([]);
+
+  const dropdownRef = useRef(null);
   const isLoggedIn = !!localStorage.getItem("accessToken");
+
+  const isActive = (path) => location.pathname === path;
+
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    navigate("/login");
+  };
+
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Fetch uploaded files when dropdown opens
+  useEffect(() => {
+    if (dropdownOpen && isLoggedIn) {
+      api
+        .get("/user/files", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+        })
+        .then((res) => setFiles(res.data.files || []))
+        .catch((err) => console.error(err));
+    }
+  }, [dropdownOpen, isLoggedIn]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-900">
-
-      {/*NAVBAR*/}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 px-8 py-4 flex justify-between items-center transition-all">
-
+      {/* NAVBAR */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 px-6 py-4 flex justify-between items-center transition-all">
         {/* Logo */}
-        <div 
-          className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 cursor-pointer hover:opacity-80 transition-opacity"
+        <div
+          className="text-2xl font-extrabold text-rose-900 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => navigate("/")}
         >
           Trustivo
         </div>
 
-        {/* Right Side */}
-        <div className="flex items-center space-x-4 sm:space-x-6">
-          {/* Language Selector */}
-          <span className="border border-gray-200 rounded-full px-4 py-1.5 bg-gray-50 text-sm font-medium text-gray-600 cursor-default shadow-sm">
-            English
-          </span>
+        {/* Hamburger (mobile) */}
+        <button
+          className="sm:hidden px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200"
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d={
+                mobileOpen
+                  ? "M6 18L18 6M6 6l12 12"
+                  : "M4 6h16M4 12h16M4 18h16"
+              }
+            />
+          </svg>
+        </button>
 
-          {/* Auth Buttons */}
+        {/* Right-side items */}
+        <div
+          className={`sm:flex items-center space-x-4 ${
+            mobileOpen
+              ? "flex flex-col space-y-2 mt-2 sm:mt-0 sm:flex-row sm:space-y-0 sm:space-x-4"
+              : "hidden sm:flex"
+          }`}
+        >
           {!isLoggedIn ? (
-            <div className="flex items-center space-x-3">
+            <>
               <button
                 onClick={() => navigate("/login")}
-                className="px-5 py-2 text-sm font-semibold text-blue-600 border-2 border-transparent hover:border-blue-100 bg-blue-50 rounded-full hover:bg-blue-100 transition-all duration-300"
+                className={`px-5 py-2 text-sm font-semibold border-2 rounded-full transition-all duration-300 ${
+                  isActive("/login")
+                    ? "bg-rose-100 border-rose-200"
+                    : "bg-rose-50 border-transparent hover:border-rose-100 hover:bg-rose-100"
+                } text-rose-900`}
               >
                 Login
               </button>
-
               <button
                 onClick={() => navigate("/register")}
-                className="px-5 py-2 text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300"
+                className="px-5 py-2 text-sm font-semibold bg-rose-800 text-white rounded-full hover:bg-rose-900 hover:shadow-lg hover:shadow-rose-900/30 hover:-translate-y-0.5 transition-all duration-300"
               >
                 Sign Up
               </button>
-            </div>
+            </>
           ) : (
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="px-5 py-2 text-sm font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5 transition-all duration-300"
-            >
-              Dashboard
-            </button>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center space-x-2 bg-rose-950 text-white px-3 py-2 rounded-full hover:shadow-lg hover:shadow-rose-950/40 transition-all"
+              >
+                <span>Profile</span>
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
+                  {/* Files Section */}
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Your Files</h3>
+                  <div className="flex flex-col gap-2 max-h-48 overflow-y-auto">
+                    {files.length === 0 ? (
+                      <p className="text-xs text-gray-400">No files uploaded</p>
+                    ) : (
+                      files.map((file) => (
+                        <a
+                          key={file.id}
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center text-sm text-rose-900 hover:bg-rose-50 rounded-md p-1 transition-all"
+                        >
+                          <img
+                            src={file.thumbnail || file.url}
+                            alt={file.name}
+                            className="w-6 h-6 rounded mr-2 object-cover"
+                          />
+                          <span className="truncate">{file.name}</span>
+                        </a>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Divider */}
+                  <div className="mt-3 border-t pt-2">
+                    <button
+                      onClick={() => { navigate("/dashboard"); setDropdownOpen(false); }}
+                      className="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 rounded"
+                    >
+                      Dashboard
+                    </button>
+                    <button
+                      onClick={logout}
+                      className="w-full text-left px-2 py-1 text-sm text-red-600 hover:bg-gray-100 rounded mt-1"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </nav>
 
-      {/*MAIN CONTENT*/}
+      {/* MAIN CONTENT */}
       <main className="flex-grow flex flex-col animate-[fadeIn_0.5s_ease-out]">
         <Outlet />
       </main>
 
-      {/*FOOTER*/}
+      {/* FOOTER */}
       <footer className="bg-white text-center py-6 border-t border-gray-100 mt-auto">
         <p className="text-sm font-medium text-gray-400">
           © {new Date().getFullYear()} Trustivo. All rights reserved.

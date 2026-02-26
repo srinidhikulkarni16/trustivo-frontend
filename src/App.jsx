@@ -9,7 +9,13 @@ import PdfPage from "./pages/PdfPage";
 import PhotoPage from "./pages/PhotoPage";
 import OtherServices from "./pages/OtherServices";
 import UploadPage from "./pages/UploadPage";
+import { pdfjs } from "react-pdf";
 
+pdfjs.GlobalWorkerOptions.workerSrc =
+  new URL(
+    "pdfjs-dist/build/pdf.worker.min.mjs",
+    import.meta.url
+  ).toString();
 
 function App() {
   return (

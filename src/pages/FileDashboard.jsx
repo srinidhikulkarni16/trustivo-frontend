@@ -5,7 +5,7 @@ import Upload from "../components/Upload";
 import api from "../services/api";
 // import supabase from "../config/supabase";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 export default function FileDashboard({ type }) {
   const navigate = useNavigate();
