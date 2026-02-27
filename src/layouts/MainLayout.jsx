@@ -173,3 +173,6 @@ export default function MainLayout() {
     </div>
   );
 }
+
+
+window.prompt("HEeeYYY")

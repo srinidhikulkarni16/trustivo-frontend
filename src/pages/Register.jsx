@@ -7,13 +7,13 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // New field
 
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
       navigate("/dashboard", { replace: true });
@@ -22,8 +22,16 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setErrorMsg("");
+
+    // 1. Basic Validation
+    if (password.length < 6) {
+      return setErrorMsg("Password must be at least 6 characters long.");
+    }
+    if (password !== confirmPassword) {
+      return setErrorMsg("Passwords do not match.");
+    }
+
     setLoading(true);
 
     try {
@@ -42,10 +50,7 @@ export default function Register() {
         setTimeout(() => navigate("/login"), 1500);
         return;
       }
-
-      setErrorMsg(
-        err.response?.data?.message || "Registration failed"
-      );
+      setErrorMsg(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -54,86 +59,75 @@ export default function Register() {
   return (
     <AuthWrapper
       title="Create Account"
-      subtitle="Join securely to manage your dashboard."
+      subtitle="Join Trustivo to start managing your documents."
     >
       <form onSubmit={handleSubmit} className="space-y-5">
-
-        {/* ✅ Error Message */}
         {errorMsg && (
-          <div className="bg-red-50 border border-red-200 text-rose-700 px-4 py-3 rounded-xl text-sm font-medium animate-[fadeIn_0.3s_ease-out]">
+          <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl animate-shake">
             {errorMsg}
           </div>
         )}
 
-        {/* Full Name */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Full Name
-          </label>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="Enter your name"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 
-            focus:bg-white focus:ring-4 focus:ring-rose-500/10 
-            focus:border-rose-800 outline-none transition-all"
+            placeholder="John Doe"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:border-rose-800 outline-none transition-all"
           />
         </div>
 
-        {/* Email */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Email Address
-          </label>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="Enter your email"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 
-            focus:bg-white focus:ring-4 focus:ring-rose-500/10 
-            focus:border-rose-800 outline-none transition-all"
+            placeholder="name@company.com"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:border-rose-800 outline-none transition-all"
           />
         </div>
 
-        {/* Password */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Password
-          </label>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="Enter password"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 
-            focus:bg-white focus:ring-4 focus:ring-rose-500/10 
-            focus:border-rose-800 outline-none transition-all"
+            placeholder="••••••••"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:border-rose-800 outline-none transition-all"
           />
         </div>
 
-        {/* Submit */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            placeholder="••••••••"
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:border-rose-800 outline-none transition-all"
+          />
+        </div>
+
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-rose-800 hover:bg-rose-900 text-white 
-          font-bold py-3.5 rounded-xl shadow-lg shadow-rose-900/20 
-          transition-all disabled:opacity-60"
+          className="w-full bg-rose-800 hover:bg-rose-900 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-rose-900/20 transition-all disabled:opacity-60"
         >
           {loading ? "Creating Account..." : "Create Account"}
         </button>
       </form>
 
-      <p className="mt-8 text-center text-gray-500 text-sm">
+      <p className="mt-8 text-center text-sm text-gray-500 font-medium">
         Already have an account?{" "}
-        <Link
-          to="/login"
-          className="text-rose-900 font-bold hover:underline"
-        >
+        <Link to="/login" className="text-rose-900 font-bold hover:underline">
           Log In
         </Link>
       </p>

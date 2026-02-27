@@ -1,79 +1,35 @@
 import axios from "axios";
 
-//axios instance
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
   withCredentials: true,
 });
 
-//request interceptor/attach jwt automatically
-api.interceptors.request.use((config)=>{
-  const token=localStorage.getItem("accessToken");
-  if(token){
-    config.headers.Authorization=`Bearer ${token}`;
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    // FIXED: Added template literal backticks
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-});
+}, (error) => Promise.reject(error));
 
-//response interceptor/ auto logout on expiry
 api.interceptors.response.use(
-  (response)=>response,
-  (error)=>{
-    if(error.response?.status===401){
+  (response) => response,
+  (error) => {
+    // Avoid redirecting if we are already on the login page
+    if (error.response?.status === 401 && window.location.pathname !== "/login") {
       localStorage.removeItem("accessToken");
-      window.location.href="/login";
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
 
-//upload PDF
-export const uploadDocument=(formData)=>
-  api.post("/document/upload", formData,{
-    headers:{
-      "Content-Type":"multipart/form-data",
-    },
-  });
+/* DOCUMENT APIs */
+export const uploadDocument = (formData) => api.post("/document/upload", formData); 
+// Note: Axios sets "Content-Type": "multipart/form-data" automatically for FormData
 
-//signature apis:
-
-//save position
-export const saveSignature = (data) => 
-  api.post("/signatures",data);
-
-//get sign of doc
-export const getSignature = (docId) => 
-  api.post("/signatures",data);
-
-//embed sign into pdfs
-export const signSignature = (payload) => 
-  api.post("/signatures",data);
-
-
-//download signed pdf
-export const downloadSignedPdf =
-async (payload) => {
-
-  const response =
-    await signDocument(payload);
-
-  const url =
-    window.URL.createObjectURL(
-      new Blob([response.data])
-    );
-
-  const link =
-    document.createElement("a");
-
-  link.href = url;
-  link.setAttribute(
-    "download",
-    "signed-document.pdf"
-  );
-
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-};
+export const getMyDocuments = () => api.get("/document/my-documents");
 
 export default api;

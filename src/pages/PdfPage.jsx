@@ -18,7 +18,7 @@ export default function PdfPage() {
   const containerRef = useRef();
 
   /* ---------- FILE SELECT ---------- */
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
