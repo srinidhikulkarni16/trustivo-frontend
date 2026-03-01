@@ -3,7 +3,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { Rnd } from "react-rnd";
 import api from "../services/api";
 
-/* ---------- PDF WORKER ---------- */
+/* PDF WORKER */
 pdfjs.GlobalWorkerOptions.workerSrc =
   new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -17,7 +17,7 @@ export default function PdfPage() {
 
   const containerRef = useRef();
 
-  /* ---------- FILE SELECT ---------- */
+  /* FILE SELECT */
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -25,7 +25,7 @@ export default function PdfPage() {
     setFileUrl(URL.createObjectURL(file));
   };
 
-  /* ---------- ADD SIGNATURE ON CLICK ---------- */
+  /* ADD SIGNATURE ON CLICK */
   const handleClick = async (e) => {
 
     if (!containerRef.current) return;
@@ -51,7 +51,7 @@ export default function PdfPage() {
     }
   };
 
-  /* ---------- UPDATE POSITION ---------- */
+  /* UPDATE POSITION */
   const updateSignature = (id, data) => {
     setSignatures(prev =>
       prev.map(sig =>
@@ -91,7 +91,7 @@ export default function PdfPage() {
         <p>Upload a PDF to start signing</p>
       )}
 
-      {/* ---------- PDF ---------- */}
+      {/* PDF */}
       {fileUrl && (
         <div
           ref={containerRef}

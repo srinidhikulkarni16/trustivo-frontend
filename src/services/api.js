@@ -28,8 +28,5 @@ api.interceptors.response.use(
 
 /* DOCUMENT APIs */
 export const uploadDocument = (formData) => api.post("/document/upload", formData); 
-// Note: Axios sets "Content-Type": "multipart/form-data" automatically for FormData
-
 export const getMyDocuments = () => api.get("/document/my-documents");
-
 export default api;

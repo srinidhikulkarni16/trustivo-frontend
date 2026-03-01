@@ -26,7 +26,7 @@ export default function SignatureBox({ sig, update }) {
       enableResizing={{
         bottomRight: true,
       }}
-      // Use a rose-colored drag handle to match the theme
+      // drag handle to match the theme
       className="z-10"
     >
       <div className="group relative border-2 border-rose-800 bg-rose-50/90 flex items-center justify-center h-full w-full rounded-lg shadow-md cursor-move select-none transition-colors hover:bg-rose-100">

@@ -24,7 +24,7 @@ export default function Register() {
     e.preventDefault();
     setErrorMsg("");
 
-    // 1. Basic Validation
+    //  Basic Validation
     if (password.length < 6) {
       return setErrorMsg("Password must be at least 6 characters long.");
     }
@@ -75,7 +75,7 @@ export default function Register() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="John Doe"
+            placeholder="Enter Full Name"
             className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:border-rose-800 outline-none transition-all"
           />
         </div>
