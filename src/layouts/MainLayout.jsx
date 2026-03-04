@@ -8,8 +8,6 @@ export default function MainLayout() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [files, setFiles] = useState([]);
-
   const dropdownRef = useRef(null);
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
@@ -30,18 +28,6 @@ export default function MainLayout() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // Fetch uploaded files when dropdown opens
-  useEffect(() => {
-    if (dropdownOpen && isLoggedIn) {
-      api
-        .get("/user/files", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
-        })
-        .then((res) => setFiles(res.data.files || []))
-        .catch((err) => console.error(err));
-    }
-  }, [dropdownOpen, isLoggedIn]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-900">
@@ -112,33 +98,7 @@ export default function MainLayout() {
 
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3">
-                  {/* Files Section */}
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Your Files</h3>
-                  <div className="flex flex-col gap-2 max-h-48 overflow-y-auto">
-                    {files.length === 0 ? (
-                      <p className="text-xs text-gray-400">No files uploaded</p>
-                    ) : (
-                      files.map((file) => (
-                        <a
-                          key={file.id}
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center text-sm text-rose-900 hover:bg-rose-50 rounded-md p-1 transition-all"
-                        >
-                          <img
-                            src={file.thumbnail || file.url}
-                            alt={file.name}
-                            className="w-6 h-6 rounded mr-2 object-cover"
-                          />
-                          <span className="truncate">{file.name}</span>
-                        </a>
-                      ))
-                    )}
-                  </div>
-
-                  {/* Divider */}
-                  <div className="mt-3 border-t pt-2">
+                  <div className="pt-1">
                     <button
                       onClick={() => { navigate("/dashboard"); setDropdownOpen(false); }}
                       className="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 rounded"

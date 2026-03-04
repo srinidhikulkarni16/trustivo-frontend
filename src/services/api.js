@@ -1,32 +1,60 @@
+// src/services/api.js
 import axios from "axios";
 
+/*AXIOS INSTANCE*/
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
   withCredentials: true,
 });
 
+/*TOKEN ATTACH*/
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
+
   if (token) {
-    // FIXED: Added template literal backticks
     config.headers.Authorization = `Bearer ${token}`;
   }
-  return config;
-}, (error) => Promise.reject(error));
 
+  return config;
+});
+
+/*AUTO LOGOUT*/
 api.interceptors.response.use(
   (response) => response,
+
   (error) => {
-    // Avoid redirecting if we are already on the login page
-    if (error.response?.status === 401 && window.location.pathname !== "/login") {
+
+    // ignore network / pdf / storage errors
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    const status = error.response.status;
+    const requestUrl = error.config?.url || "";
+
+    // logout ONLY if auth endpoint fails
+    const isAuthRequest =
+      requestUrl.includes("/auth") ||
+      requestUrl.includes("/login") ||
+      requestUrl.includes("/me");
+
+    if (status === 401 && isAuthRequest) {
       localStorage.removeItem("accessToken");
       window.location.href = "/login";
     }
+
     return Promise.reject(error);
   }
 );
 
-/* DOCUMENT APIs */
-export const uploadDocument = (formData) => api.post("/document/upload", formData); 
-export const getMyDocuments = () => api.get("/document/my-documents");
+/*DOCUMENT UPLOAD FUNCTION
+   USED BY Upload.jsx*/
+export const uploadDocument = async (formData) => {
+  return api.post("/docs/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 export default api;
