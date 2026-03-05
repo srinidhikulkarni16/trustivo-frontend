@@ -1,16 +1,43 @@
-# React + Vite
+**Trustivo – Secure Digital Signature SaaS**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Description:**
+Trustivo is a full-stack, SaaS-based digital document signature platform designed to help businesses securely upload, manage, and sign PDF documents online.
 
-Currently, two official plugins are available:
+Built with a modern, production-ready architecture, Trustivo focuses on security, scalability, and seamless user experience. It supports multi-signer workflows, audit logging, and role-based access control—making it suitable for real-world enterprise and startup environments.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Features:**
+1. Secure user authentication (JWT access + refresh tokens)
 
-## React Compiler
+2. Upload and preview PDF documents
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Drag & drop signature field placement
 
-## Expanding the ESLint configuration
+4. Multi-signer workflow management
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+5. Document status tracking
+
+6. Audit trail
+
+7. Protected API routes and role-based authorization
+
+8. Cloud-ready storage integration
+
+**Tech Stack:**
+1. Frontend
+    React (Vite)
+    Tailwind CSS
+    react-pdf
+    dnd-kit
+    Axios
+    React Hook Form
+    Zod
+
+2. Backend:
+    Node.js
+    Express
+
+3. Database & Storage:
+    Supabase (PostgreSQL + Storage)
+
+4. Authentication:
+JSON Web Token (Access + Refresh Tokens)
