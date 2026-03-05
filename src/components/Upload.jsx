@@ -3,9 +3,9 @@ import { uploadDocument } from "../services/api";
 
 const TYPE_CONFIG = {
   pdf:   { accept: "application/pdf", extensions: ".pdf", label: "PDF Document", icon: "📄" },
-  photo: { accept: "image/png,image/jpeg,image/webp,image/gif", extensions: ".png,.jpg,.jpeg,.webp,.gif", label: "Image", icon: "🖼️" },
-  word:  { accept: "application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document", extensions: ".doc,.docx", label: "Word Document", icon: "📝" },
-  excel: { accept: "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", extensions: ".xls,.xlsx", label: "Excel File", icon: "📊" },
+  // photo: { accept: "image/png,image/jpeg,image/webp,image/gif", extensions: ".png,.jpg,.jpeg,.webp,.gif", label: "Image", icon: "🖼️" },
+  // word:  { accept: "application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document", extensions: ".doc,.docx", label: "Word Document", icon: "📝" },
+  // excel: { accept: "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", extensions: ".xls,.xlsx", label: "Excel File", icon: "📊" },
 };
 
 export default function Upload({ type = "pdf", onUploadSuccess }) {

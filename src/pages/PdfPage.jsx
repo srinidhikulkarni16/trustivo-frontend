@@ -114,7 +114,7 @@ export default function PdfPage() {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) return;
-      // ✅ Always include documentId so it shows in SignatureManager
+      // Always include documentId so it shows in SignatureManager
       await api.post("/signatures", {
         ...signatureData,
         documentId: documentId || null,
