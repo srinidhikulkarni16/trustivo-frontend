@@ -1,10 +1,12 @@
 // src/services/api.js
 import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL;
+
+const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+
 /*AXIOS INSTANCE*/
 const api = axios.create({
-  baseURL: `${API_URL}/api`, // dynamic backend URL
-  withCredentials: true,     // keep this if you need cookies/session
+  baseURL: `${API_URL}/api`, 
+  withCredentials: true,
 });
 
 /*TOKEN ATTACH*/
