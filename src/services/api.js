@@ -1,15 +1,18 @@
 // src/services/api.js
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+// Normalize the URL: remove any trailing slashes from the Env variable
+const RAW_URL = import.meta.env.VITE_API_URL || "";
+const BASE_URL_CLEAN = RAW_URL.replace(/\/+$/, "");
 
-/*AXIOS INSTANCE*/
+/* AXIOS INSTANCE */
 const api = axios.create({
-  baseURL: `${API_URL}/api`, 
+  // Construct the base URL reliably: https://your-domain.com/api
+  baseURL: `${BASE_URL_CLEAN}/api`, 
   withCredentials: true,
 });
 
-/*TOKEN ATTACH*/
+/* TOKEN ATTACH */
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
 
@@ -20,12 +23,11 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-/*AUTO LOGOUT*/
+/* AUTO LOGOUT */
 api.interceptors.response.use(
   (response) => response,
 
   (error) => {
-
     // ignore network / pdf / storage errors
     if (!error.response) {
       return Promise.reject(error);
@@ -49,8 +51,7 @@ api.interceptors.response.use(
   }
 );
 
-/*DOCUMENT UPLOAD FUNCTION
-   USED BY Upload.jsx*/
+/* DOCUMENT UPLOAD FUNCTION */
 export const uploadDocument = async (formData) => {
   return api.post("/docs/upload", formData, {
     headers: {
