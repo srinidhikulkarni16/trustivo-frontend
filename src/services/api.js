@@ -2,13 +2,12 @@
 import axios from "axios";
 
 // Normalize the URL: remove any trailing slashes from the Env variable
-const RAW_URL = import.meta.env.VITE_API_URL || "";
-const BASE_URL_CLEAN = RAW_URL.replace(/\/+$/, "");
+const API_URL = import.meta.env.VITE_API_URL.replace(/\/+$/, "");
 
 /* AXIOS INSTANCE */
 const api = axios.create({
-  // Construct the base URL reliably: https://your-domain.com/api
-  baseURL: `${BASE_URL_CLEAN}/api`, 
+  // This ensures we have exactly one slash between the domain and 'api'
+  baseURL: `${API_URL}/api`, 
   withCredentials: true,
 });
 
