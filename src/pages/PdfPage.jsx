@@ -3,16 +3,37 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Rnd } from "react-rnd";
 import { PDFDocument, rgb } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 import api from "../services/api";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 
 const FONTS = [
-  { label: "Signature Script", value: "'Dancing Script', cursive" },
-  { label: "Elegant Italic",   value: "'Pacifico', cursive" },
-  { label: "Classic Serif",    value: "'Playfair Display', serif" },
-  { label: "Clean Sans",       value: "'Inter', sans-serif" },
-  { label: "Typewriter",       value: "'Courier New', monospace" },
+  { 
+    label: "Signature Script", 
+    value: "'Dancing Script', cursive",
+    url: "https://fonts.gstatic.com/s/dancingscript/v24/If2cXTr6YS-zF4S-kcSWSVi_sxjsohD9F50Ruu7BMSo3Sup8.ttf"
+  },
+  { 
+    label: "Elegant Italic", 
+    value: "'Pacifico', cursive",
+    url: "https://fonts.gstatic.com/s/pacifico/v22/FwZY7-Qmy14u9lezJ96A4sijpFu_.ttf"
+  },
+  { 
+    label: "Classic Serif", 
+    value: "'Playfair Display', serif",
+    url: "https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.ttf"
+  },
+  { 
+    label: "Clean Sans", 
+    value: "'Inter', sans-serif",
+    url: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.ttf"
+  },
+  { 
+    label: "Typewriter", 
+    value: "'Courier New', monospace",
+    url: null // Built-in font
+  },
 ];
 
 const GOOGLE_FONTS_URL =
@@ -141,7 +162,14 @@ export default function PdfPage() {
       setDownloading(true);
       const existingPdfBytes = await fetch(fileUrl).then((r) => r.arrayBuffer());
       const pdfDoc = await PDFDocument.load(existingPdfBytes);
+      
+      // Register fontkit to handle custom fonts
+      pdfDoc.registerFontkit(fontkit);
+      
       const pages = pdfDoc.getPages();
+      
+      // Cache embedded fonts so we don't fetch/embed the same font multiple times
+      const embeddedFonts = {};
 
       for (const sig of signatures) {
         const page = pages[sig.page - 1];
@@ -149,10 +177,32 @@ export default function PdfPage() {
         const { height } = page.getSize();
         const scale = page.getWidth() / pdfWidth;
 
+        // Determine and embed the appropriate font
+        let font;
+        const fontInfo = FONTS.find(f => f.value === sig.font);
+        
+        if (!fontInfo || !fontInfo.url) {
+          // Fallback or Typewriter built-in font
+          font = await pdfDoc.embedFont("Courier");
+        } else {
+          // Fetch and embed the custom font
+          if (!embeddedFonts[sig.font]) {
+            try {
+              const fontBytes = await fetch(fontInfo.url).then(r => r.arrayBuffer());
+              embeddedFonts[sig.font] = await pdfDoc.embedFont(fontBytes);
+            } catch (err) {
+              console.warn(`Failed to load font ${sig.font}, using Helvetica fallback`);
+              embeddedFonts[sig.font] = await pdfDoc.embedFont("Helvetica");
+            }
+          }
+          font = embeddedFonts[sig.font];
+        }
+
         page.drawText(sig.name, {
           x: sig.x * scale,
           y: height - (sig.y + sig.height * 0.6) * scale,
           size: Math.max(10, 14 * scale),
+          font, // Apply the embedded font
           color: rgb(0.1, 0.1, 0.1),
         });
 
@@ -161,6 +211,7 @@ export default function PdfPage() {
             x: sig.x * scale,
             y: height - (sig.y + sig.height * 0.85) * scale,
             size: Math.max(7, 8 * scale),
+            font, // Apply the embedded font to date as well
             color: rgb(0.4, 0.4, 0.4),
           });
         }
