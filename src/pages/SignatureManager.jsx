@@ -311,7 +311,7 @@ export default function SignatureManager() {
                     <label className="block text-xs font-semibold text-gray-500 mb-1.5">Signer Name</label>
                     <input
                       type="text"
-                      placeholder="John Smith"
+                      placeholder="e.g: Srinidhi Kulkarni"
                       value={sendName}
                       onChange={(e) => setSendName(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-rose-400 outline-none text-sm transition-all"

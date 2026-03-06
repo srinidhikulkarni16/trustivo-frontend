@@ -51,7 +51,7 @@ export default function Login() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
 
-        {/* ✅ Error Message */}
+        {/* Error Message */}
         {errorMsg && (
           <div className="bg-red-50 border border-red-200 text-rose-700 px-4 py-3 rounded-xl text-sm font-medium animate-[fadeIn_0.3s_ease-out]">
             {errorMsg}

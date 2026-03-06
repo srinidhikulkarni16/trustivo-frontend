@@ -114,7 +114,7 @@ export default function PdfPage() {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) return;
-      // Always include documentId so it shows in SignatureManager
+      //included documentId so it's shown in SignatureManager
       await api.post("/signatures", {
         ...signatureData,
         documentId: documentId || null,
@@ -202,7 +202,7 @@ export default function PdfPage() {
           x: sig.x * scale,
           y: height - (sig.y + sig.height * 0.6) * scale,
           size: Math.max(10, 14 * scale),
-          font, // Apply the embedded font
+          font,
           color: rgb(0.1, 0.1, 0.1),
         });
 
@@ -211,7 +211,7 @@ export default function PdfPage() {
             x: sig.x * scale,
             y: height - (sig.y + sig.height * 0.85) * scale,
             size: Math.max(7, 8 * scale),
-            font, // Apply the embedded font to date as well
+            font,
             color: rgb(0.4, 0.4, 0.4),
           });
         }
@@ -279,7 +279,7 @@ export default function PdfPage() {
                   <label className="block text-xs font-semibold text-gray-500 mb-1.5">Signer Name</label>
                   <input
                     type="text"
-                    placeholder="e.g. John Smith"
+                    placeholder="e.g: Srinidhi Kulkarni"
                     value={sigConfig.name}
                     onChange={(e) => setSigConfig((c) => ({ ...c, name: e.target.value }))}
                     className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-rose-400 focus:ring-2 focus:ring-rose-100 outline-none text-sm transition-all"
@@ -399,7 +399,7 @@ export default function PdfPage() {
                     ✍ {signatures.length} placed
                   </span>
                 )}
-                {/* Only show "Change file" if not viewing a stored document */}
+                
                 {!documentId && (
                   <button onClick={() => { setFileUrl(null); setSignatures([]); setFileName(""); setCurrentPage(1); }}
                     className="text-xs text-gray-400 hover:text-rose-700 underline font-medium transition-colors">
